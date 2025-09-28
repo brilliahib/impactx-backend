@@ -87,4 +87,15 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Feed::class);
     }
+
+    public function activityRegistrations()
+    {
+        return $this->hasMany(ActivityRegistration::class);
+    }
+
+    public function participatingActivities()
+    {
+        return $this->belongsToMany(Activity::class, 'activity_participants')
+            ->withTimestamps();
+    }
 }

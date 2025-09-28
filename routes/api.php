@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ActivityParticipantController;
+use App\Http\Controllers\ActivityRegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\UserProfileController;
@@ -44,5 +46,16 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/user/{username}', [FeedController::class, 'getByUsername']);
         Route::put('/{id}', [FeedController::class, 'update']);
         Route::delete('/{id}', [FeedController::class, 'destroy']);
+    });
+
+    Route::prefix('registrations')->group(function () {
+        Route::get('/', [ActivityRegistrationController::class, 'index']);
+        Route::post('/', [ActivityRegistrationController::class, 'store']);
+        Route::put('/{id}', [ActivityRegistrationController::class, 'update']);
+    });
+
+    Route::prefix('participants')->group(function () {
+        Route::get('/', [ActivityParticipantController::class, 'index']);
+        Route::delete('/{id}', [ActivityParticipantController::class, 'destroy']);
     });
 });

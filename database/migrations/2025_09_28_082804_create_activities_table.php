@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('location');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('max_participants');
+            $table->unsignedInteger('max_participants');
             $table->text('description');
             $table->text('requirements');
             $table->text('benefits')->nullable();

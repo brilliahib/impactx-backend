@@ -33,4 +33,10 @@ class Activity extends Model
     {
         return $this->hasMany(Feed::class);
     }
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'activity_participants')
+            ->withTimestamps();
+    }
 }
