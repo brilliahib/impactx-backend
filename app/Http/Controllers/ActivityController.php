@@ -13,7 +13,30 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $data = Activity::all();
+        $activities = Activity::with([
+            'user:id,first_name,last_name',
+            'user.profile:id,user_id,profile_images,role,university'
+        ])->get();
+
+        $data = $activities->map(function ($activity) {
+            return [
+                'id' => $activity->id,
+                'title' => $activity->title,
+                'activity_type' => $activity->activity_type,
+                'activity_category' => $activity->activity_category,
+                'max_participants' => $activity->max_participants,
+                'description' => $activity->description,
+                'created_at' => $activity->created_at,
+                'updated_at' => $activity->updated_at,
+                'user' => [
+                    'id' => $activity->user->id,
+                    'name' => trim($activity->user->first_name . ' ' . $activity->user->last_name),
+                    'role' => $activity->user->profile?->role,
+                    'university' => $activity->user->profile?->university,
+                    'profile_images' => $activity->user->profile?->profile_images,
+                ],
+            ];
+        });
 
         return response()->json([
             'meta' => [
@@ -29,7 +52,32 @@ class ActivityController extends Controller
     {
         $activities = Activity::whereHas('user', function ($q) use ($username) {
             $q->where('username', $username);
-        })->get();
+        })
+            ->with([
+                'user:id,first_name,last_name',
+                'user.profile:id,user_id,profile_images,role,university'
+            ])
+            ->get();
+
+        $data = $activities->map(function ($activity) {
+            return [
+                'id' => $activity->id,
+                'title' => $activity->title,
+                'activity_type' => $activity->activity_type,
+                'activity_category' => $activity->activity_category,
+                'max_participants' => $activity->max_participants,
+                'description' => $activity->description,
+                'created_at' => $activity->created_at,
+                'updated_at' => $activity->updated_at,
+                'user' => [
+                    'id' => $activity->user->id,
+                    'name' => trim($activity->user->first_name . ' ' . $activity->user->last_name),
+                    'role' => $activity->user->profile?->role,
+                    'university' => $activity->user->profile?->university,
+                    'profile_images' => $activity->user->profile?->profile_images,
+                ],
+            ];
+        });
 
         return response()->json([
             'meta' => [
@@ -37,7 +85,7 @@ class ActivityController extends Controller
                 'statusCode' => 200,
                 'message' => 'User activities retrieved successfully',
             ],
-            'data' => $activities,
+            'data' => $data,
         ]);
     }
 
