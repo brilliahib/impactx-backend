@@ -28,4 +28,9 @@ class Activity extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function feeds()
+    {
+        return $this->hasMany(Feed::class);
+    }
 }

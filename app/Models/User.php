@@ -61,6 +61,18 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    protected $appends = ['name', 'profile_images'];
+
+    public function getNameAttribute()
+    {
+        return trim($this->first_name . ' ' . $this->last_name);
+    }
+
+    public function getProfileImagesAttribute()
+    {
+        return $this->userProfile?->profile_images;
+    }
+
     public function profile()
     {
         return $this->hasOne(UserProfile::class);
@@ -69,5 +81,10 @@ class User extends Authenticatable implements JWTSubject
     public function activities()
     {
         return $this->hasMany(Activity::class);
+    }
+
+    public function feeds()
+    {
+        return $this->hasMany(Feed::class);
     }
 }
