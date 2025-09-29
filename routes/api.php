@@ -24,6 +24,10 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::get('/get-auth', [AuthController::class, 'getAuth']);
+    });
+
     Route::prefix('profile')->group(function () {
         Route::get('/', [UserProfileController::class, 'index']);
         Route::post('/', [UserProfileController::class, 'store']);
