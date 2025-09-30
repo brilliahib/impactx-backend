@@ -17,7 +17,7 @@ class FeedController extends Controller
             'user:id,first_name,last_name',
             'user.profile:id,user_id,profile_images,role,university',
             'activity:id,title,activity_type,activity_category,max_participants,description'
-        ])->get();
+        ])->latest()->get();
 
         $data = $feeds->map(function ($feed) {
             return [
@@ -55,7 +55,7 @@ class FeedController extends Controller
             'user:id,first_name,last_name',
             'user.profile:id,user_id,profile_images,role,university',
             'activity:id,title,activity_type,activity_category,max_participants,description'
-        ])->get();
+        ])->latest()->get();
 
         $data = $feeds->map(function ($feed) {
             return [
