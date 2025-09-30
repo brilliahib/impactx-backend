@@ -42,17 +42,6 @@ class UserProfileController extends Controller
             $query->where('username', $username);
         })->first();
 
-        if (!$profile) {
-            return response()->json([
-                'meta' => [
-                    'status' => 'error',
-                    'statusCode' => 404,
-                    'message' => 'User profile not found',
-                ],
-                'data' => null,
-            ], 404);
-        }
-
         return response()->json([
             'meta' => [
                 'status' => 'success',
