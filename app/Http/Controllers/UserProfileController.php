@@ -36,6 +36,33 @@ class UserProfileController extends Controller
         ]);
     }
 
+    public function getByUsername($username)
+    {
+        $profile = UserProfile::whereHas('user', function ($query) use ($username) {
+            $query->where('username', $username);
+        })->first();
+
+        if (!$profile) {
+            return response()->json([
+                'meta' => [
+                    'status' => 'error',
+                    'statusCode' => 404,
+                    'message' => 'User profile not found',
+                ],
+                'data' => null,
+            ], 404);
+        }
+
+        return response()->json([
+            'meta' => [
+                'status' => 'success',
+                'statusCode' => 200,
+                'message' => 'User profile retrieved successfully',
+            ],
+            'data' => $profile,
+        ]);
+    }
+
     public function store(CreateUserProfileRequest $request)
     {
         $data = $request->validated();

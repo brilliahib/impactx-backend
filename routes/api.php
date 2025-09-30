@@ -35,6 +35,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('profile')->group(function () {
         Route::get('/', [UserProfileController::class, 'index']);
+        Route::get('/user/{username}', [UserProfileController::class, 'getByUsername']);
         Route::post('/', [UserProfileController::class, 'store']);
         Route::patch('/', [UserProfileController::class, 'update']);
         Route::delete('/', [UserProfileController::class, 'destroy']);
