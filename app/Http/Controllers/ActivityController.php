@@ -176,6 +176,8 @@ class ActivityController extends Controller
             'start_date' => $activity->start_date,
             'end_date' => $activity->end_date,
             'images' => $activity->images,
+            'benefits' => $activity->benefits,
+            'requirements' => $activity->requirements,
             'description' => $activity->description,
             'created_at' => $activity->created_at,
             'updated_at' => $activity->updated_at,
