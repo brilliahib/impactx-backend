@@ -74,7 +74,12 @@ class ActivityController extends Controller
                 'user.profile:id,user_id,profile_images,role,university',
                 'participants:id,first_name,last_name',
                 'participants.profile:id,user_id,profile_images',
-            ])->latest()->get();
+            ])
+            ->whereHas('user', function ($query) use ($username) {
+                $query->where('username', $username);
+            })
+            ->latest()
+            ->get();
 
         $data = $activities->map(function ($activity) {
             $participants = $activity->participants->map(function ($user) {
