@@ -137,4 +137,51 @@ class UserProfileController extends Controller
             'data' => null,
         ]);
     }
+
+    public function getProfile()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'meta' => [
+                    'status' => 'error',
+                    'statusCode' => 401,
+                    'message' => 'Unauthorized',
+                ],
+                'data' => null,
+            ], 401);
+        }
+
+        $userWithProfile = \App\Models\User::with([
+            'profile:id,user_id,profile_images,role,university,major'
+        ])->find($user->id);
+
+        if (!$userWithProfile) {
+            return response()->json([
+                'meta' => [
+                    'status' => 'error',
+                    'statusCode' => 404,
+                    'message' => 'User not found',
+                ],
+                'data' => null,
+            ], 404);
+        }
+
+        return response()->json([
+            'meta' => [
+                'status' => 'success',
+                'statusCode' => 200,
+                'message' => 'User profile retrieved successfully',
+            ],
+            'data' => [
+                'id' => $userWithProfile->id,
+                'first_name' => $userWithProfile->first_name,
+                'last_name' => $userWithProfile->last_name,
+                'email' => $userWithProfile->email,
+                'username' => $userWithProfile->username,
+                'profile' => $userWithProfile->profile,
+            ],
+        ]);
+    }
 }

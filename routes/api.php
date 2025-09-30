@@ -23,9 +23,14 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
+Route::prefix('feeds')->group(function () {
+    Route::get('/', [FeedController::class, 'index']);
+});
+
 Route::middleware('auth:api')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::get('/get-auth', [AuthController::class, 'getAuth']);
+        Route::get('/get-profile', [UserProfileController::class, 'getProfile']);
     });
 
     Route::prefix('profile')->group(function () {
@@ -45,7 +50,6 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::prefix('feeds')->group(function () {
-        Route::get('/', [FeedController::class, 'index']);
         Route::post('/', [FeedController::class, 'store']);
         Route::get('/user/{username}', [FeedController::class, 'getByUsername']);
         Route::put('/{id}', [FeedController::class, 'update']);
