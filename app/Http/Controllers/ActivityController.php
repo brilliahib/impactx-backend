@@ -17,8 +17,8 @@ class ActivityController extends Controller
             ->with([
                 'user:id,first_name,last_name,username',
                 'user.profile:id,user_id,profile_images,role,university',
-                'participants:id,first_name,last_name',
-                'participants.profile:id,user_id,profile_images',
+                'participants:id,first_name,last_name,username',
+                'participants.profile:id,user_id,profile_images,role,university',
             ])->latest()->get();
 
         $data = $activities->map(function ($activity) {
@@ -26,6 +26,9 @@ class ActivityController extends Controller
                 return [
                     'id' => $user->id,
                     'name' => trim($user->first_name . ' ' . $user->last_name),
+                    'username' => $user->username,
+                    'role' => $user->profile?->role,
+                    'university' => $user->profile?->university,
                     'profile_images' => $user->profile?->profile_images,
                 ];
             })->values();
@@ -72,8 +75,8 @@ class ActivityController extends Controller
             ->with([
                 'user:id,first_name,last_name,username',
                 'user.profile:id,user_id,profile_images,role,university',
-                'participants:id,first_name,last_name',
-                'participants.profile:id,user_id,profile_images',
+                'participants:id,first_name,last_name,username',
+                'participants.profile:id,user_id,profile_images,role,university',
             ])
             ->whereHas('user', function ($query) use ($username) {
                 $query->where('username', $username);
@@ -86,6 +89,9 @@ class ActivityController extends Controller
                 return [
                     'id' => $user->id,
                     'name' => trim($user->first_name . ' ' . $user->last_name),
+                    'username' => $user->username,
+                    'role' => $user->profile?->role,
+                    'university' => $user->profile?->university,
                     'profile_images' => $user->profile?->profile_images,
                 ];
             })->values();
