@@ -27,6 +27,7 @@ class FeedController extends Controller
                 'updated_at' => $feed->updated_at,
                 'user' => [
                     'id' => $feed->user->id,
+                    'username' => $feed->user->username,
                     'name' => trim($feed->user->first_name . ' ' . $feed->user->last_name),
                     'role' => $feed->user->profile?->role,
                     'university' => $feed->user->profile?->university,
@@ -65,6 +66,7 @@ class FeedController extends Controller
                 'updated_at' => $feed->updated_at,
                 'user' => [
                     'id' => $feed->user->id,
+                    'username' => $feed->user->username,
                     'name' => trim($feed->user->first_name . ' ' . $feed->user->last_name),
                     'role' => $feed->user->profile?->role,
                     'university' => $feed->user->profile?->university,

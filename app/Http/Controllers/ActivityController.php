@@ -45,6 +45,7 @@ class ActivityController extends Controller
                 'updated_at' => $activity->updated_at,
                 'user' => [
                     'id' => $activity->user->id,
+                    'username' => $activity->user->username,
                     'name' => trim($activity->user->first_name . ' ' . $activity->user->last_name),
                     'role' => $activity->user->profile?->role,
                     'university' => $activity->user->profile?->university,
@@ -99,6 +100,7 @@ class ActivityController extends Controller
                 'updated_at' => $activity->updated_at,
                 'user' => [
                     'id' => $activity->user->id,
+                    'username' => $activity->user->username,
                     'name' => trim($activity->user->first_name . ' ' . $activity->user->last_name),
                     'role' => $activity->user->profile?->role,
                     'university' => $activity->user->profile?->university,
