@@ -14,7 +14,7 @@ class FeedController extends Controller
     public function index()
     {
         $feeds = Feed::with([
-            'user:id,first_name,last_name',
+            'user:id,first_name,last_name,username',
             'user.profile:id,user_id,profile_images,role,university',
             'activity:id,title,activity_type,activity_category,max_participants,description'
         ])->latest()->get();
@@ -52,7 +52,7 @@ class FeedController extends Controller
         $feeds = Feed::whereHas('user', function ($q) use ($username) {
             $q->where('username', $username);
         })->with([
-            'user:id,first_name,last_name',
+            'user:id,first_name,last_name,username',
             'user.profile:id,user_id,profile_images,role,university',
             'activity:id,title,activity_type,activity_category,max_participants,description'
         ])->latest()->get();

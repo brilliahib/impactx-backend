@@ -15,7 +15,7 @@ class ActivityController extends Controller
     {
         $activities = Activity::withCount('participants')
             ->with([
-                'user:id,first_name,last_name',
+                'user:id,first_name,last_name,username',
                 'user.profile:id,user_id,profile_images,role,university',
                 'participants:id,first_name,last_name',
                 'participants.profile:id,user_id,profile_images',
@@ -69,7 +69,7 @@ class ActivityController extends Controller
     {
         $activities = Activity::withCount('participants')
             ->with([
-                'user:id,first_name,last_name',
+                'user:id,first_name,last_name,username',
                 'user.profile:id,user_id,profile_images,role,university',
                 'participants:id,first_name,last_name',
                 'participants.profile:id,user_id,profile_images',
