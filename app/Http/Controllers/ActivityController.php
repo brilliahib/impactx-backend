@@ -13,12 +13,27 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $activities = Activity::with([
-            'user:id,first_name,last_name',
-            'user.profile:id,user_id,profile_images,role,university'
-        ])->get();
+        $activities = Activity::withCount('participants')
+            ->with([
+                'user:id,first_name,last_name',
+                'user.profile:id,user_id,profile_images,role,university',
+                'participants:id,first_name,last_name',
+                'participants.profile:id,user_id,profile_images',
+            ])->get();
 
         $data = $activities->map(function ($activity) {
+            $participants = $activity->participants->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => trim($user->first_name . ' ' . $user->last_name),
+                    'profile_images' => $user->profile?->profile_images,
+                ];
+            })->values();
+
+            $ownerIsParticipant = $activity->participants->contains('id', $activity->user->id);
+
+            $totalParticipants = $activity->participants_count + ($ownerIsParticipant ? 0 : 1);
+
             return [
                 'id' => $activity->id,
                 'title' => $activity->title,
@@ -35,6 +50,8 @@ class ActivityController extends Controller
                     'university' => $activity->user->profile?->university,
                     'profile_images' => $activity->user->profile?->profile_images,
                 ],
+                'total_participants' => $totalParticipants,
+                'participants' => $participants,
             ];
         });
 
@@ -50,16 +67,27 @@ class ActivityController extends Controller
 
     public function getActivityUser($username)
     {
-        $activities = Activity::whereHas('user', function ($q) use ($username) {
-            $q->where('username', $username);
-        })
+        $activities = Activity::withCount('participants')
             ->with([
                 'user:id,first_name,last_name',
-                'user.profile:id,user_id,profile_images,role,university'
-            ])
-            ->get();
+                'user.profile:id,user_id,profile_images,role,university',
+                'participants:id,first_name,last_name',
+                'participants.profile:id,user_id,profile_images',
+            ])->get();
 
         $data = $activities->map(function ($activity) {
+            $participants = $activity->participants->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => trim($user->first_name . ' ' . $user->last_name),
+                    'profile_images' => $user->profile?->profile_images,
+                ];
+            })->values();
+
+            $ownerIsParticipant = $activity->participants->contains('id', $activity->user->id);
+
+            $totalParticipants = $activity->participants_count + ($ownerIsParticipant ? 0 : 1);
+
             return [
                 'id' => $activity->id,
                 'title' => $activity->title,
@@ -76,6 +104,8 @@ class ActivityController extends Controller
                     'university' => $activity->user->profile?->university,
                     'profile_images' => $activity->user->profile?->profile_images,
                 ],
+                'total_participants' => $totalParticipants,
+                'participants' => $participants,
             ];
         });
 
@@ -83,7 +113,7 @@ class ActivityController extends Controller
             'meta' => [
                 'status' => 'success',
                 'statusCode' => 200,
-                'message' => 'User activities retrieved successfully',
+                'message' => 'Activities user retrieved successfully',
             ],
             'data' => $data,
         ]);
@@ -91,9 +121,16 @@ class ActivityController extends Controller
 
     public function getActivityDetail($id)
     {
-        $data = Activity::find($id);
+        $activity = Activity::withCount('participants')
+            ->with([
+                'user:id,first_name,last_name',
+                'user.profile:id,user_id,profile_images,role,university',
+                'participants:id,first_name,last_name',
+                'participants.profile:id,user_id,profile_images',
+            ])
+            ->find($id);
 
-        if (!$data) {
+        if (!$activity) {
             return response()->json([
                 'meta' => [
                     'status' => 'error',
@@ -103,6 +140,38 @@ class ActivityController extends Controller
                 'data' => null,
             ], 404);
         }
+
+        $participants = $activity->participants->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => trim($user->first_name . ' ' . $user->last_name),
+                'profile_images' => $user->profile?->profile_images,
+            ];
+        })->values();
+
+        $ownerIsParticipant = $activity->participants->contains('id', $activity->user->id);
+
+        $totalParticipants = $activity->participants_count + ($ownerIsParticipant ? 0 : 1);
+
+        $data = [
+            'id' => $activity->id,
+            'title' => $activity->title,
+            'activity_type' => $activity->activity_type,
+            'activity_category' => $activity->activity_category,
+            'max_participants' => $activity->max_participants,
+            'description' => $activity->description,
+            'created_at' => $activity->created_at,
+            'updated_at' => $activity->updated_at,
+            'user' => [
+                'id' => $activity->user->id,
+                'name' => trim($activity->user->first_name . ' ' . $activity->user->last_name),
+                'role' => $activity->user->profile?->role,
+                'university' => $activity->user->profile?->university,
+                'profile_images' => $activity->user->profile?->profile_images,
+            ],
+            'total_participants' => $totalParticipants,
+            'participants' => $participants,
+        ];
 
         return response()->json([
             'meta' => [

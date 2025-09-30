@@ -76,7 +76,7 @@ class ActivityRegistrationController extends Controller
             'status' => 'required|in:pending,accepted,rejected',
         ]);
 
-        $registration = ActivityRegistration::findOrFail($id);
+        $registration = ActivityRegistration::with('activity')->findOrFail($id);
 
         if ($registration->activity->user_id !== auth()->id()) {
             return response()->json([
@@ -92,10 +92,7 @@ class ActivityRegistrationController extends Controller
         $registration->save();
 
         if ($request->status === 'accepted') {
-            ActivityParticipant::firstOrCreate([
-                'activity_id' => $registration->activity_id,
-                'user_id' => $registration->user_id,
-            ]);
+            $registration->activity->participants()->syncWithoutDetaching([$registration->user_id]);
         }
 
         return response()->json([

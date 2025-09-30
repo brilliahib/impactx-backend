@@ -90,21 +90,6 @@ class FeedController extends Controller
         $data = $request->validated();
         $data['user_id'] = Auth::id();
 
-        if (!isset($data['activity_id'])) {
-            $activityExists = Activity::where('id', $data['activity_id'])->exists();
-
-            if (!$activityExists) {
-                return response()->json([
-                    'meta' => [
-                        'status' => 'error',
-                        'statusCode' => 404,
-                        'message' => 'Activity not found',
-                    ],
-                    'data' => null,
-                ], 404);
-            }
-        }
-
         $feed = Feed::create($data);
 
         return response()->json([
