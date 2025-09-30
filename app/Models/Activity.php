@@ -24,6 +24,10 @@ class Activity extends Model
         'activity_category',
     ];
 
+    protected $casts = [
+        'activity_category' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
