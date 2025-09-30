@@ -19,7 +19,7 @@ class ActivityController extends Controller
                 'user.profile:id,user_id,profile_images,role,university',
                 'participants:id,first_name,last_name',
                 'participants.profile:id,user_id,profile_images',
-            ])->get();
+            ])->latest()->get();
 
         $data = $activities->map(function ($activity) {
             $participants = $activity->participants->map(function ($user) {
@@ -73,7 +73,7 @@ class ActivityController extends Controller
                 'user.profile:id,user_id,profile_images,role,university',
                 'participants:id,first_name,last_name',
                 'participants.profile:id,user_id,profile_images',
-            ])->get();
+            ])->latest()->get();
 
         $data = $activities->map(function ($activity) {
             $participants = $activity->participants->map(function ($user) {
