@@ -139,7 +139,7 @@ class ActivityController extends Controller
                 'user:id,first_name,last_name',
                 'user.profile:id,user_id,profile_images,role,university',
                 'participants:id,first_name,last_name',
-                'participants.profile:id,user_id,profile_images',
+                'participants.profile:id,user_id,profile_images,role,university',
             ])
             ->find($id);
 
@@ -159,6 +159,8 @@ class ActivityController extends Controller
                 'id' => $user->id,
                 'name' => trim($user->first_name . ' ' . $user->last_name),
                 'profile_images' => $user->profile?->profile_images,
+                'role' => $user->profile?->role,
+                'university' => $user->profile?->university,
             ];
         })->values();
 

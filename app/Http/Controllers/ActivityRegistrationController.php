@@ -88,18 +88,39 @@ class ActivityRegistrationController extends Controller
             ], 403);
         }
 
-        $registration->status = $request->status;
-        $registration->save();
-
         if ($request->status === 'accepted') {
             $registration->activity->participants()->syncWithoutDetaching([$registration->user_id]);
+            $registration->delete();
+
+            return response()->json([
+                'meta' => [
+                    'status' => 'success',
+                    'statusCode' => 200,
+                    'message' => 'Registration accepted and removed from registrations',
+                ],
+            ], 200);
         }
+
+        if ($request->status === 'rejected') {
+            $registration->delete();
+
+            return response()->json([
+                'meta' => [
+                    'status' => 'success',
+                    'statusCode' => 200,
+                    'message' => 'Registration rejected and removed from registrations',
+                ],
+            ], 200);
+        }
+
+        $registration->status = 'pending';
+        $registration->save();
 
         return response()->json([
             'meta' => [
                 'status' => 'success',
                 'statusCode' => 200,
-                'message' => 'Registration updated successfully',
+                'message' => 'Registration set to pending',
             ],
             'data' => $registration,
         ], 200);
