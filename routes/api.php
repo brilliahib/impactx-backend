@@ -63,6 +63,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/', [ActivityRegistrationController::class, 'index']);
         Route::post('/', [ActivityRegistrationController::class, 'store']);
         Route::put('/{id}', [ActivityRegistrationController::class, 'update']);
+        Route::get('/{activityId}/check', [ActivityRegistrationController::class, 'checkApplied']);
     });
 
     Route::prefix('participants')->group(function () {
