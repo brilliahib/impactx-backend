@@ -24,7 +24,8 @@ class CreateActivityRequest extends FormRequest
         return [
             'title'             => 'required|string|max:255',
             'activity_type'     => 'required|string|max:100',
-            'activity_category' => 'required|string|max:100',
+            'activity_category' => 'required|array',
+            'activity_category.*' => 'string',
             'images'            => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'location'          => 'required|string|max:255',
             'start_date'        => 'required|date',
