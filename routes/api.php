@@ -6,6 +6,7 @@ use App\Http\Controllers\ActivityRegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -76,5 +77,10 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{username}/followings', [FollowController::class, 'followingsByUsername']);
         Route::get('/{username}/counts', [FollowController::class, 'countFollowersAndFollowings']);
         Route::get('/{username}/is-following', [FollowController::class, 'isFollowing']);
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('/suggestions', [UserController::class, 'suggestUsers']);
+        Route::get('/', [UserController::class, 'getAllUsers']);
     });
 });
