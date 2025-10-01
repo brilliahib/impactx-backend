@@ -22,15 +22,26 @@ class UpdateUserProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'about_description' => 'sometimes|string',
-            'profile_images' => 'sometimes|file|image|max:2048',
-            'role' => 'sometimes|string',
-            'university' => 'sometimes|string',
-            'major' => 'sometimes|string',
-            'contact_info' => 'sometimes|array',
-            'contact_info.*' => 'string',
-            'skills' => 'sometimes|array',
-            'skills.*' => 'string',
+            'first_name' => ['nullable', 'string', 'max:100'],
+            'last_name'  => ['nullable', 'string', 'max:100'],
+            'username'   => ['nullable', 'string', 'max:100', 'unique:users,username,' . $this->user()->id],
+
+            'about_description' => ['nullable', 'string'],
+            'profile_images'    => ['nullable', 'image', 'max:2048'],
+            'role'              => ['nullable', 'string', 'max:100'],
+            'university'        => ['nullable', 'string', 'max:150'],
+            'major'             => ['nullable', 'string', 'max:150'],
+            'contact_info'      => ['nullable', 'array'],
+            'skills'            => ['nullable', 'array'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'username.unique' => 'Username sudah dipakai, silakan gunakan yang lain.',
+            'profile_images.image' => 'File harus berupa gambar.',
+            'profile_images.max' => 'Ukuran gambar maksimal 2MB.',
         ];
     }
 }

@@ -82,48 +82,63 @@ class UserProfileController extends Controller
         ], 201);
     }
 
-    public function update(UpdateUserProfileRequest $request)
+    public function updateUserAndProfile(UpdateUserProfileRequest $request)
     {
-        $profile = UserProfile::where('user_id', Auth::id())->first();
+        $user = Auth::user();
 
-        if (!$profile) {
+        if (!$user) {
             return response()->json([
                 'meta' => [
                     'status' => 'error',
-                    'statusCode' => 404,
-                    'message' => 'User profile not found',
+                    'statusCode' => 401,
+                    'message' => 'Unauthorized',
                 ],
                 'data' => null,
-            ], 404);
+            ], 401);
         }
 
         $data = $request->validated();
 
+        $user->update([
+            'first_name' => $data['first_name'] ?? $user->first_name,
+            'last_name' => $data['last_name'] ?? $user->last_name,
+            'username' => $data['username'] ?? $user->username,
+        ]);
+
+        $profile = UserProfile::where('user_id', $user->id)->first();
+
         if ($request->hasFile('profile_images')) {
             $file = $request->file('profile_images');
-            $username = Auth::user()->username ?? 'user_' . Auth::id();
             $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 . '_' . time()
                 . '.' . $file->getClientOriginalExtension();
 
-            $path = $file->storeAs('profile_images/' . $username, $filename, 'public');
+            $path = $file->storeAs('profile_images/' . $user->username, $filename, 'public');
 
-            if ($profile->profile_images && Storage::disk('public')->exists($profile->profile_images)) {
+            if ($profile && $profile->profile_images && Storage::disk('public')->exists($profile->profile_images)) {
                 Storage::disk('public')->delete($profile->profile_images);
             }
 
             $data['profile_images'] = $path;
         }
 
-        $profile->update($data);
+        if ($profile) {
+            $profile->update($data);
+        } else {
+            $data['user_id'] = $user->id;
+            $profile = UserProfile::create($data);
+        }
 
         return response()->json([
             'meta' => [
                 'status' => 'success',
                 'statusCode' => 200,
-                'message' => 'User profile updated successfully',
+                'message' => 'User and profile updated successfully',
             ],
-            'data' => $profile,
+            'data' => [
+                'user' => $user,
+                'profile' => $profile,
+            ],
         ]);
     }
 
