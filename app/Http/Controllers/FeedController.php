@@ -16,8 +16,13 @@ class FeedController extends Controller
         $feeds = Feed::with([
             'user:id,first_name,last_name,username',
             'user.profile:id,user_id,profile_images,role,university',
-            'activity:id,title,activity_type,activity_category,max_participants,description'
-        ])->latest()->get();
+            'activity:id,title,activity_type,activity_category,max_participants,description,images'
+        ])
+            ->with(['activity' => function ($q) {
+                $q->withCount('participants');
+            }])
+            ->latest()
+            ->get();
 
         $data = $feeds->map(function ($feed) {
             return [
@@ -33,7 +38,16 @@ class FeedController extends Controller
                     'university' => $feed->user->profile?->university,
                     'profile_images' => $feed->user->profile?->profile_images,
                 ],
-                'activity' => $feed->activity,
+                'activity' => $feed->activity ? [
+                    'id' => $feed->activity->id,
+                    'title' => $feed->activity->title,
+                    'activity_type' => $feed->activity->activity_type,
+                    'activity_category' => $feed->activity->activity_category,
+                    'max_participants' => $feed->activity->max_participants,
+                    'description' => $feed->activity->description,
+                    'images' => $feed->activity->images,
+                    'total_participants' => $feed->activity->participants_count,
+                ] : null,
             ];
         });
 
@@ -47,7 +61,6 @@ class FeedController extends Controller
         ]);
     }
 
-
     public function getByUsername($username)
     {
         $feeds = Feed::whereHas('user', function ($q) use ($username) {
@@ -55,8 +68,13 @@ class FeedController extends Controller
         })->with([
             'user:id,first_name,last_name,username',
             'user.profile:id,user_id,profile_images,role,university',
-            'activity:id,title,activity_type,activity_category,max_participants,description'
-        ])->latest()->get();
+            'activity:id,title,activity_type,activity_category,max_participants,description,images'
+        ])
+            ->with(['activity' => function ($q) {
+                $q->withCount('participants');
+            }])
+            ->latest()
+            ->get();
 
         $data = $feeds->map(function ($feed) {
             return [
@@ -72,10 +90,18 @@ class FeedController extends Controller
                     'university' => $feed->user->profile?->university,
                     'profile_images' => $feed->user->profile?->profile_images,
                 ],
-                'activity' => $feed->activity,
+                'activity' => $feed->activity ? [
+                    'id' => $feed->activity->id,
+                    'title' => $feed->activity->title,
+                    'activity_type' => $feed->activity->activity_type,
+                    'activity_category' => $feed->activity->activity_category,
+                    'max_participants' => $feed->activity->max_participants,
+                    'description' => $feed->activity->description,
+                    'images' => $feed->activity->images,
+                    'total_participants' => $feed->activity->participants_count,
+                ] : null,
             ];
         });
-
 
         return response()->json([
             'meta' => [
@@ -86,6 +112,7 @@ class FeedController extends Controller
             'data' => $data,
         ]);
     }
+
 
     public function store(CreateFeedRequest $request)
     {
