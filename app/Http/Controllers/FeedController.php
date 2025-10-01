@@ -46,7 +46,7 @@ class FeedController extends Controller
                     'max_participants' => $feed->activity->max_participants,
                     'description' => $feed->activity->description,
                     'images' => $feed->activity->images,
-                    'total_participants' => $feed->activity->participants_count,
+                    'total_participants' => $feed->activity->participants_count + 1,
                 ] : null,
             ];
         });
@@ -98,7 +98,7 @@ class FeedController extends Controller
                     'max_participants' => $feed->activity->max_participants,
                     'description' => $feed->activity->description,
                     'images' => $feed->activity->images,
-                    'total_participants' => $feed->activity->participants_count,
+                    'total_participants' => $feed->activity->participants_count + 1,
                 ] : null,
             ];
         });
