@@ -125,4 +125,24 @@ class ActivityRegistrationController extends Controller
             'data' => $registration,
         ], 200);
     }
+
+    public function checkApplied($activityId)
+    {
+        $user = Auth::user();
+
+        $applied = ActivityRegistration::where('activity_id', $activityId)
+            ->where('user_id', $user->id)
+            ->exists();
+
+        return response()->json([
+            'meta' => [
+                'status' => 'success',
+                'statusCode' => 200,
+                'message' => $applied ? 'User has applied' : 'User has not applied',
+            ],
+            'data' => [
+                'applied' => $applied,
+            ]
+        ], 200);
+    }
 }
