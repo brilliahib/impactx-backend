@@ -211,8 +211,8 @@ class ActivityController extends Controller
         $data = $request->validated();
         $data['user_id'] = Auth::id();
 
-        if ($request->hasFile('activity_images')) {
-            $file = $request->file('activity_images');
+        if ($request->hasFile('images')) {
+            $file = $request->file('images');
             $username = Auth::user()->username ?? 'user_' . Auth::id();
 
             $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
@@ -221,7 +221,7 @@ class ActivityController extends Controller
 
             $path = $file->storeAs('activity_images/' . $username, $filename, 'public');
 
-            $data['activity_images'] = $path;
+            $data['images'] = $path;
         }
 
         $activity = Activity::create($data);
