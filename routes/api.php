@@ -5,6 +5,7 @@ use App\Http\Controllers\ActivityParticipantController;
 use App\Http\Controllers\ActivityRegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -66,5 +67,14 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('participants')->group(function () {
         Route::get('/', [ActivityParticipantController::class, 'index']);
         Route::delete('/{id}', [ActivityParticipantController::class, 'destroy']);
+    });
+
+    Route::prefix('follows')->group(function () {
+        Route::post('/{username}', [FollowController::class, 'follow']);
+        Route::delete('/{username}', [FollowController::class, 'unfollow']);
+        Route::get('/{username}/followers', [FollowController::class, 'followersByUsername']);
+        Route::get('/{username}/followings', [FollowController::class, 'followingsByUsername']);
+        Route::get('/{username}/counts', [FollowController::class, 'countFollowersAndFollowings']);
+        Route::get('/{username}/is-following', [FollowController::class, 'isFollowing']);
     });
 });
