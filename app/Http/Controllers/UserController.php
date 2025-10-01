@@ -12,7 +12,8 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        $suggestions = User::where('id', '!=', $user->id)
+        $suggestions = User::with('profile:id,user_id,profile_images,role,university')
+            ->where('id', '!=', $user->id)
             ->whereNotIn('id', $user->followings()->pluck('followed_id'))
             ->inRandomOrder()
             ->limit(5)
@@ -32,7 +33,8 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        $users = User::where('id', '!=', $user->id)
+        $users = User::with('profile:id,user_id,profile_images,role,university')
+            ->where('id', '!=', $user->id)
             ->get(['id', 'first_name', 'last_name', 'username', 'email']);
 
         return response()->json([
