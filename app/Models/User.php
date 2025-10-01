@@ -98,4 +98,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Activity::class, 'activity_participants')
             ->withTimestamps();
     }
+
+    public function followings()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id')->withTimestamps();
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id')->withTimestamps();
+    }
 }
