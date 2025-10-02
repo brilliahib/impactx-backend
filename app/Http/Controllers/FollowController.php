@@ -79,6 +79,7 @@ class FollowController extends Controller
 
     public function followersByUsername($username)
     {
+        $authUserId = auth()->id();
         $user = User::where('username', $username)->firstOrFail();
 
         $followers = $user->followers()
@@ -92,6 +93,9 @@ class FollowController extends Controller
                 'user_profiles.profile_images'
             )
             ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
+            ->withExists(['followers as is_followed' => function ($q) use ($authUserId) {
+                $q->where('follower_id', $authUserId);
+            }])
             ->get();
 
         return response()->json([
@@ -106,6 +110,7 @@ class FollowController extends Controller
 
     public function followingsByUsername($username)
     {
+        $authUserId = auth()->id();
         $user = User::where('username', $username)->firstOrFail();
 
         $followings = $user->followings()
@@ -119,7 +124,14 @@ class FollowController extends Controller
                 'user_profiles.profile_images'
             )
             ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
-            ->get();
+            ->get()
+            ->map(function ($following) use ($authUserId) {
+                $following->is_followed = \DB::table('follows')
+                    ->where('follower_id', $authUserId)
+                    ->where('followed_id', $following->id)
+                    ->exists();
+                return $following;
+            });
 
         return response()->json([
             'meta' => [
