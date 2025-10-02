@@ -45,12 +45,12 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('activities')->group(function () {
         Route::get('/', [ActivityController::class, 'index']);
+        Route::get('/type', [ActivityController::class, 'getByType']);
         Route::get('/user/{username}', [ActivityController::class, 'getActivityUser']);
         Route::get('/{id}', [ActivityController::class, 'getActivityDetail']);
         Route::post('/', [ActivityController::class, 'store']);
         Route::put('/{id}', [ActivityController::class, 'update']);
         Route::delete('/{id}', [ActivityController::class, 'destroy']);
-        Route::get('/type', [ActivityController::class, 'getByType']);
     });
 
     Route::prefix('feeds')->group(function () {
