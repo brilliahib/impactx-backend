@@ -327,4 +327,73 @@ class ActivityController extends Controller
             'data' => null,
         ]);
     }
+
+    public function getByType()
+    {
+        $activityType = request()->query('activity_type');
+
+        $query = Activity::withCount('participants')
+            ->with([
+                'user:id,first_name,last_name,username',
+                'user.profile:id,user_id,profile_images,role,university',
+                'participants:id,first_name,last_name,username',
+                'participants.profile:id,user_id,profile_images,role,university',
+            ])
+            ->latest();
+
+        if ($activityType && in_array($activityType, ['project', 'volunteer', 'competition'])) {
+            $query->where('activity_type', $activityType);
+        }
+
+        $activities = $query->get();
+
+        $data = $activities->map(function ($activity) {
+            $participants = $activity->participants->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => trim($user->first_name . ' ' . $user->last_name),
+                    'username' => $user->username,
+                    'role' => $user->profile?->role,
+                    'university' => $user->profile?->university,
+                    'profile_images' => $user->profile?->profile_images,
+                ];
+            })->values();
+
+            $ownerIsParticipant = $activity->participants->contains('id', $activity->user->id);
+
+            $totalParticipants = $activity->participants_count + ($ownerIsParticipant ? 0 : 1);
+
+            return [
+                'id' => $activity->id,
+                'title' => $activity->title,
+                'activity_type' => $activity->activity_type,
+                'activity_category' => $activity->activity_category,
+                'max_participants' => $activity->max_participants,
+                'description' => $activity->description,
+                'created_at' => $activity->created_at,
+                'updated_at' => $activity->updated_at,
+                'user' => [
+                    'id' => $activity->user->id,
+                    'username' => $activity->user->username,
+                    'name' => trim($activity->user->first_name . ' ' . $activity->user->last_name),
+                    'role' => $activity->user->profile?->role,
+                    'university' => $activity->user->profile?->university,
+                    'profile_images' => $activity->user->profile?->profile_images,
+                ],
+                'total_participants' => $totalParticipants,
+                'participants' => $participants,
+            ];
+        });
+
+        return response()->json([
+            'meta' => [
+                'status' => 'success',
+                'statusCode' => 200,
+                'message' => $activityType
+                    ? "Activities filtered by type: {$activityType}"
+                    : 'Activities retrieved successfully',
+            ],
+            'data' => $data,
+        ]);
+    }
 }
