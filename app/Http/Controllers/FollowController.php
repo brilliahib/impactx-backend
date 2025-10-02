@@ -80,7 +80,19 @@ class FollowController extends Controller
     public function followersByUsername($username)
     {
         $user = User::where('username', $username)->firstOrFail();
-        $followers = $user->followers()->get(['id', 'first_name', 'last_name', 'username']);
+
+        $followers = $user->followers()
+            ->select(
+                'users.id',
+                'users.first_name',
+                'users.last_name',
+                'users.username',
+                'user_profiles.role',
+                'user_profiles.university',
+                'user_profiles.profile_images'
+            )
+            ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
+            ->get();
 
         return response()->json([
             'meta' => [
@@ -95,7 +107,19 @@ class FollowController extends Controller
     public function followingsByUsername($username)
     {
         $user = User::where('username', $username)->firstOrFail();
-        $followings = $user->followings()->get(['id', 'first_name', 'last_name', 'username']);
+
+        $followings = $user->followings()
+            ->select(
+                'users.id',
+                'users.first_name',
+                'users.last_name',
+                'users.username',
+                'user_profiles.role',
+                'user_profiles.university',
+                'user_profiles.profile_images'
+            )
+            ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
+            ->get();
 
         return response()->json([
             'meta' => [
