@@ -108,4 +108,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id')->withTimestamps();
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function mentionedInComments()
+    {
+        return $this->hasMany(CommentMention::class, 'mentioned_user_id');
+    }
 }

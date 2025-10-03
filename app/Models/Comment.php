@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Feed extends Model
+class Comment extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'feed_id',
         'user_id',
-        'activity_id',
         'content',
     ];
 
@@ -20,18 +20,13 @@ class Feed extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function activity()
+    public function feed()
     {
-        return $this->belongsTo(Activity::class);
+        return $this->belongsTo(Feed::class);
     }
 
-    public function comments()
+    public function mentions()
     {
-        return $this->hasMany(Comment::class);
-    }
-
-    public function likes()
-    {
-        return $this->hasMany(FeedLike::class);
+        return $this->hasMany(CommentMention::class);
     }
 }
