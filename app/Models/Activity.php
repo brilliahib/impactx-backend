@@ -43,4 +43,9 @@ class Activity extends Model
         return $this->belongsToMany(User::class, 'activity_participants')
             ->withTimestamps();
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

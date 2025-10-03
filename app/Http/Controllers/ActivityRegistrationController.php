@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateActivityRegistrationRequest;
 use App\Models\ActivityParticipant;
 use App\Models\ActivityRegistration;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -90,6 +91,14 @@ class ActivityRegistrationController extends Controller
 
         if ($request->status === 'accepted') {
             $registration->activity->participants()->syncWithoutDetaching([$registration->user_id]);
+
+            Notification::create([
+                'user_id' => $registration->user_id,
+                'activity_id' => $registration->activity_id,
+                'type' => 'accepted',
+                'message' => "Your registration for {$registration->activity->title} has been accepted!",
+            ]);
+
             $registration->delete();
 
             return response()->json([
@@ -102,6 +111,13 @@ class ActivityRegistrationController extends Controller
         }
 
         if ($request->status === 'rejected') {
+            Notification::create([
+                'user_id' => $registration->user_id,
+                'activity_id' => $registration->activity_id,
+                'type' => 'rejected',
+                'message' => "Your registration for {$registration->activity->title} has been rejected.",
+            ]);
+
             $registration->delete();
 
             return response()->json([
