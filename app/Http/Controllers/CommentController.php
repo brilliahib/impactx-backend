@@ -45,7 +45,7 @@ class CommentController extends Controller
     public function getByFeed($feedId)
     {
         $comments = Comment::with([
-            'user:id,first_name,last_name',
+            'user:id,first_name,last_name,username',
             'user.profile:id,user_id,role,university,profile_images'
         ])
             ->where('feed_id', $feedId)
@@ -62,6 +62,7 @@ class CommentController extends Controller
                     'user' => [
                         'first_name'     => $user->first_name ?? null,
                         'last_name'      => $user->last_name ?? null,
+                        'username'      => $user->username ?? null,
                         'role'           => $profile->role ?? null,
                         'university'     => $profile->university ?? null,
                         'profile_images' => $profile->profile_images ?? null,
