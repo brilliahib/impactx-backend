@@ -4,7 +4,9 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityParticipantController;
 use App\Http\Controllers\ActivityRegistrationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\FeedLikeController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
@@ -27,6 +29,7 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::prefix('feeds')->group(function () {
     Route::get('/', [FeedController::class, 'index']);
+    Route::get('/{feedId}/comments', [CommentController::class, 'getByFeed']);
 });
 
 Route::middleware('auth:api')->group(function () {
@@ -55,6 +58,8 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('feeds')->group(function () {
         Route::post('/', [FeedController::class, 'store']);
+        Route::post('/{feedId}/comments', [CommentController::class, 'store']);
+        Route::post('/{feedId}/like', [FeedLikeController::class, 'toggle']);
         Route::get('/user/{username}', [FeedController::class, 'getByUsername']);
         Route::put('/{id}', [FeedController::class, 'update']);
         Route::delete('/{id}', [FeedController::class, 'destroy']);
