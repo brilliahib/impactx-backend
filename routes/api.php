@@ -91,6 +91,7 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('users')->group(function () {
         Route::get('/suggestions', [UserController::class, 'suggestUsers']);
         Route::get('/', [UserController::class, 'getAllUsers']);
+        Route::get('/{username}', [UserController::class, 'getUserByUsername']);
     });
 
     Route::prefix('notifications')->group(function () {
