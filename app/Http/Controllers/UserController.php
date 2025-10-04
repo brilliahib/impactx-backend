@@ -46,4 +46,31 @@ class UserController extends Controller
             'data' => $users
         ], 200);
     }
+
+    public function getUserByUsername($username)
+    {
+        $user = User::with('profile:id,user_id,profile_images,role,university')
+            ->where('username', $username)
+            ->first(['id', 'first_name', 'last_name', 'username', 'email']);
+
+        if (!$user) {
+            return response()->json([
+                'meta' => [
+                    'status' => 'error',
+                    'statusCode' => 404,
+                    'message' => 'User not found.'
+                ],
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'meta' => [
+                'status' => 'success',
+                'statusCode' => 200,
+                'message' => 'User retrieved successfully.'
+            ],
+            'data' => $user
+        ], 200);
+    }
 }
