@@ -322,4 +322,15 @@ Instruksi tambahan:
             ],
         ]);
     }
+
+    public function hasCareerPrediction()
+    {
+        $user = Auth::user();
+
+        $exists = CareerPrediction::where('user_id', $user->id)->exists();
+
+        return response()->json([
+            'hasCareerPrediction' => $exists,
+        ]);
+    }
 }
