@@ -330,7 +330,15 @@ Instruksi tambahan:
         $exists = CareerPrediction::where('user_id', $user->id)->exists();
 
         return response()->json([
-            'hasCareerPrediction' => $exists,
+
+            'meta' => [
+                'status' => 'success',
+                'statusCode' => 200,
+                'message' => 'Check for career prediction completed',
+            ],
+            'data' => [
+                'hasCareerPrediction' => $exists,
+            ],
         ]);
     }
 }
