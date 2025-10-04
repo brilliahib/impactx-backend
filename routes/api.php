@@ -11,6 +11,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\WorkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -96,5 +97,19 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/', [NotificationController::class, 'index']);
         Route::post('/{id}/read', [NotificationController::class, 'markAsRead']);
         Route::get('/unread-count', [NotificationController::class, 'getUnreadCount']);
+    });
+
+    Route::prefix('works')->group(function () {
+        Route::get('/', [WorkController::class, 'index']);
+        Route::get('/user/{username}', [WorkController::class, 'showByUsername']);
+        Route::get('/me', [WorkController::class, 'showByAuthUser']);
+        Route::post('/', [WorkController::class, 'store']);
+        Route::put('/{id}', [WorkController::class, 'update']);
+        Route::delete('/{id}', [WorkController::class, 'destroy']);
+        Route::post('/predict', [WorkController::class, 'predictCareerPath']);
+    });
+
+    Route::prefix('career')->group(function () {
+        Route::get('/', [WorkController::class, 'history']);
     });
 });
