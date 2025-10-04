@@ -107,6 +107,7 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{id}', [WorkController::class, 'update']);
         Route::delete('/{id}', [WorkController::class, 'destroy']);
         Route::post('/predict', [WorkController::class, 'predictCareerPath']);
+        Route::get('/predict/exists', [WorkController::class, 'hasCareerPrediction']);
     });
 
     Route::prefix('career')->group(function () {
