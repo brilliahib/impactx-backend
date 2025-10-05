@@ -13,18 +13,28 @@ class FeedController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
         $feeds = Feed::with([
             'user:id,first_name,last_name,username',
             'user.profile:id,user_id,profile_images,role,university',
-            'activity:id,title,activity_type,activity_category,max_participants,description,images'
+            'activity:id,title,activity_type,activity_category,max_participants,description,images',
         ])
             ->with(['activity' => function ($q) {
                 $q->withCount('participants');
             }])
+            ->withCount(['likes', 'comments'])
             ->latest()
             ->get();
 
-        $data = $feeds->map(function ($feed) {
+        $data = $feeds->map(function ($feed) use ($user) {
+            $isLiked = false;
+            if ($user) {
+                $isLiked = $feed->likes()
+                    ->where('user_id', $user->id)
+                    ->exists();
+            }
+
             return [
                 'id' => $feed->id,
                 'content' => $feed->content,
@@ -48,6 +58,9 @@ class FeedController extends Controller
                     'images' => $feed->activity->images,
                     'total_participants' => $feed->activity->participants_count + 1,
                 ] : null,
+                'total_likes' => $feed->likes_count,
+                'total_comments' => $feed->comments_count,
+                'is_liked' => $user ? $isLiked : null,
             ];
         });
 
