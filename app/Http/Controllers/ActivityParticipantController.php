@@ -48,9 +48,9 @@ class ActivityParticipantController extends Controller
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy($userId)
     {
-        $participant = ActivityParticipant::find($id);
+        $participant = ActivityParticipant::where('user_id', $userId)->first();
 
         if (!$participant) {
             return response()->json([
