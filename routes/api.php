@@ -76,7 +76,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('participants')->group(function () {
         Route::get('/', [ActivityParticipantController::class, 'index']);
-        Route::delete('/{id}', [ActivityParticipantController::class, 'destroy']);
+        Route::delete('/user/{userId}', [ActivityParticipantController::class, 'destroy']);
     });
 
     Route::prefix('follows')->group(function () {
