@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityChatController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityParticipantController;
 use App\Http\Controllers\ActivityRegistrationController;
@@ -113,5 +114,12 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('career')->group(function () {
         Route::get('/', [WorkController::class, 'history']);
+    });
+
+    Route::prefix('chats')->group(function () {
+        Route::get('/{activityId}', [ActivityChatController::class, 'index']);
+        Route::post('/', [ActivityChatController::class, 'store']);
+        Route::put('/{id}', [ActivityChatController::class, 'update']);
+        Route::delete('/{id}', [ActivityChatController::class, 'destroy']);
     });
 });
