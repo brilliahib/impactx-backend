@@ -61,6 +61,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('feeds')->group(function () {
         Route::post('/', [FeedController::class, 'store']);
+        Route::get('/{id}', [FeedController::class, 'show']);
         Route::post('/{feedId}/comments', [CommentController::class, 'store']);
         Route::post('/{feedId}/like', [FeedLikeController::class, 'toggle']);
         Route::get('/user/{username}', [FeedController::class, 'getByUsername']);
