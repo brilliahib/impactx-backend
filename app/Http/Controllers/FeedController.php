@@ -173,10 +173,7 @@ class FeedController extends Controller
 
     public function show($id)
     {
-        $feed = Feed::with([
-            'user:id,name,profile_images,role,university',
-            'activity:id,title,activity_type,activity_category,max_participants,description'
-        ])->find($id);
+        $feed = Feed::find($id);
 
         if (!$feed) {
             return response()->json([
