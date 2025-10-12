@@ -184,9 +184,7 @@ class UserProfileController extends Controller
             ], 401);
         }
 
-        $userWithProfile = \App\Models\User::with([
-            'profile:id,user_id,profile_images,role,university,major'
-        ])->find($user->id);
+        $userWithProfile = \App\Models\User::with('profile')->find($user->id);
 
         if (!$userWithProfile) {
             return response()->json([
